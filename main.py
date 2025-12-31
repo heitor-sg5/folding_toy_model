@@ -2,7 +2,6 @@ import argparse
 import os
 import json
 import random
-import numpy as np
 import time
 from collections import Counter
 
@@ -27,7 +26,6 @@ args = parser.parse_args()
 
 # Seed the rng for reproducibility
 random.seed(args.seed)
-np.random.seed(args.seed)
 
 # Load residue properties from json
 with open(os.path.join(data_dir, "residues.json")) as f:

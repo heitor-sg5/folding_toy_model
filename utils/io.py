@@ -43,7 +43,7 @@ def plot_3d(filename, local_energies=None):
     # Plot hydrophobicity
     ax1 = fig.add_subplot(121, projection='3d')
     H = df["H"].values
-    H_clipped = np.clip(H, -2.0, 2.0)
+    H_clipped = np.clip(H, -1.8, 1.8)
     colors_H = cm.coolwarm((H_clipped + 2.0) / 4.0)
     ax1.scatter(df["x"], df["y"], df["z"], c=colors_H, s=50)
 
@@ -62,7 +62,7 @@ def plot_3d(filename, local_energies=None):
     ax1.set_zlabel("Z")
 
     mappable_H = cm.ScalarMappable(cmap="coolwarm")
-    mappable_H.set_array([-2.0, 2.0])
+    mappable_H.set_array([-1.8, 1.8])
     plt.colorbar(mappable_H, ax=ax1, shrink=0.6, label="Hydrophobicity")
 
     # Plot local interaction energies

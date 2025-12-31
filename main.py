@@ -73,7 +73,7 @@ csv_filename = save_structure(structure, structure_dir, sequence=sequence)
 end = time.time() - start
 
 # Plot final 3d structure with local energies
-plot_3d(os.path.join(structure_dir, csv_filename), chain, local_energies=trajectory[-1]["local_energies"])
+plot_3d(os.path.join(structure_dir, csv_filename), local_energies=trajectory[-1]["local_energies"])
 
 # Get move counts
 move_types = [step["move_type"] for step in trajectory if "move_type" in step]

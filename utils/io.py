@@ -36,7 +36,7 @@ def save_structure(structure, structure_dir, sequence=None):
     return csv_filename
 
 # Plot 3d structure of peptide
-def plot_3d(filename, chain=None, local_energies=None):
+def plot_3d(filename, local_energies=None):
     df = pd.read_csv(filename)
     fig = plt.figure(figsize=(14, 6))
 

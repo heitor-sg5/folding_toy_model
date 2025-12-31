@@ -47,7 +47,7 @@ start = time.time()
 # Initialize lattice and peptide chain
 lattice = Lattice()
 chain = PeptideChain(residue_props=residue_props, lattice=lattice)
-chain.initialize_linear(sequence)  # place residues in a straight line
+chain.initialize_linear(sequence) # place residues on a zigzag along the x-axis
 
 # Define the energy model with parameters
 energy_model = EnergyModel(alpha=0.2, eps_HH=1.0, eps_HP=0.3, eps_Q=1.0)

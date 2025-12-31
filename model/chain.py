@@ -6,7 +6,7 @@ class PeptideChain:
         self.residue_props = residue_props
         self.lattice = lattice
 
-    # Initialize chain in a linear configuration along x-axis.
+    # Initialize chain in a zigzag configuration along x-axis.
     def initialize_linear(self, sequence):
         for i, aa in enumerate(sequence):
             properties = self.residue_props.get(aa)

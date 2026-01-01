@@ -9,7 +9,7 @@ from model.chain import PeptideChain
 from model.lattice import Lattice
 from folding.energy import EnergyModel
 from folding.relax import relax_chain
-from utils.io import save_structure, save_log, plot_3d
+from utils.io import save_structure, save_log, plot_3d, plot_energy_vs_steps
 
 # Directories for output
 structure_dir = "output/structures"
@@ -72,6 +72,7 @@ end = time.time() - start
 
 # Plot final 3d structure with local energies
 plot_3d(os.path.join(structure_dir, csv_filename), local_energies=trajectory[-1]["local_energies"])
+plot_energy_vs_steps(trajectory)
 
 # Get move counts
 move_types = [step["move_type"] for step in trajectory if "move_type" in step]

@@ -7,21 +7,25 @@ from collections import Counter
 
 from model.chain import PeptideChain
 from model.lattice import Lattice
+
 from folding.energy import EnergyModel
 from folding.relax import relax_chain
-from utils.io import save_structure, save_log, plot_3d, plot_energy_vs_steps
 
-# Directories for output
+from utils.save import save_structure, save_log 
+from utils.viewer import plot_3d
+from utils.analytics import plot_energy_vs_steps
+
+# Directories for output\
 structure_dir = "output/structures"
 log_dir = "output/logs"
 data_dir = "data"
 
 # CL argument parser
 parser = argparse.ArgumentParser(description="Toy protein folding model")
-parser.add_argument("--sequence", type=str, required=True,
-                    help="Peptide sequence OR name of file")
-parser.add_argument("--steps", type=int, default=1000) # number of simulation steps
+parser.add_argument("--sequence", type=str, required=True, help="Peptide sequence OR name of file")
 parser.add_argument("--seed", type=int, default=42) # random seed
+parser.add_argument("--steps", type=int, default=1000) # number of simulation steps
+parser.add_argument("--runs", type=int, default=1) # number of simulations to run
 args = parser.parse_args()
 
 # Seed the rng for reproducibility

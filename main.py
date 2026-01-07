@@ -115,13 +115,12 @@ def main():
                 run_id=i,
                 plot=False,
             )
-
+            trajectories.append(trajectory)
             print(f"Run {i}")
             print(f"Final Energy: {trajectory['final_energy']:.2f}")
             print(f"Lowest Energy: {trajectory['min_energy']:.2f}")
             print(f"Move counts: {trajectory['move_counts']}")
             print(f"Runtime: {trajectory['runtime']:.2f} seconds\n")
-            trajectories.append(trajectory)
         print(f"Runtime: {(time.time() - total_runtime):.2f} seconds\n")
 
 if __name__ == "__main__":

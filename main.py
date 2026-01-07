@@ -104,7 +104,7 @@ def main():
         print(f"Logs saved to {log_dir}")
 
     else:
-        total_runtime = 0
+        total_runtime = time.time()
         for i in range(1, args.runs + 1):
             result = run_simulation(
                 sequence=sequence,
@@ -120,8 +120,7 @@ def main():
             print(f"Lowest Energy: {result['min_energy']:.2f}")
             print(f"Move counts: {result['move_counts']}")
             print(f"Runtime: {result['runtime']:.2f} seconds\n")
-            total_runtime += result['runtime']
-        print(f"Runtime: {total_runtime:.2f} seconds\n")
+        print(f"Runtime: {(time.time() - total_runtime):.2f} seconds\n")
 
 if __name__ == "__main__":
     main()

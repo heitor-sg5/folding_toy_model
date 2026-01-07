@@ -13,7 +13,7 @@ from folding.relax import relax_chain
 
 from utils.save import save_structure, save_log
 from utils.viewer import plot_3d
-from utils.analytics import plot_energy_vs_steps
+from utils.analytics import plot_energy_vs_steps, plot_contact_graphs, build_contact_graph
 
 structure_dir = "output/structures"
 log_dir = "output/logs"
@@ -54,12 +54,17 @@ def run_simulation(sequence, residue_props, steps, seed, run_id=None, plot=False
     total_energy = trajectory[-1]["total_energy"]
     min_energy = min(step["total_energy"] for step in trajectory)
 
+    contact_graph = build_contact_graph(structure, lattice)
+
     return {
         "run_tag": run_tag,
         "final_energy": total_energy,
         "min_energy": min_energy,
         "move_counts": dict(move_counts),
         "runtime": runtime,
+        "structure": structure,
+        "trajectory": trajectory,
+        "contact_graph": contact_graph
     }
 
 def main():
@@ -86,28 +91,30 @@ def main():
         sequence = args.sequence
 
     if args.runs == 1:
-        trajectory = run_simulation(
+        result = run_simulation(
             sequence=sequence, 
             residue_props=residue_props, 
             steps=args.steps, 
             seed=args.seed, 
             plot=True,
         )
-
         print(f"Sequence: {sequence}")
         print(f"Length: {len(sequence)}")
-        print(f"Final Energy: {trajectory['final_energy']:.2f}")
-        print(f"Lowest Energy: {trajectory['min_energy']:.2f}")
-        print(f"Move counts: {trajectory['move_counts']}")
-        print(f"Runtime: {trajectory['runtime']:.2f} seconds")
+        print(f"Final Energy: {result['final_energy']:.2f}")
+        print(f"Lowest Energy: {result['min_energy']:.2f}")
+        print(f"Move counts: {result['move_counts']}")
+        print(f"Runtime: {result['runtime']:.2f} seconds")
         print(f"Structures saved to {structure_dir}")
         print(f"Logs saved to {log_dir}")
 
     else:
+        graphs = []
         trajectories = []
         total_runtime = time.time()
+        print(f"Sequence: {sequence}")
+        print(f"Length: {len(sequence)}")
         for i in range(1, args.runs + 1):
-            trajectory = run_simulation(
+            result = run_simulation(
                 sequence=sequence,
                 residue_props=residue_props,
                 steps=args.steps,
@@ -115,13 +122,16 @@ def main():
                 run_id=i,
                 plot=False,
             )
-            trajectories.append(trajectory)
+            graphs.append(result["contact_graph"])
+            trajectories.append(result["trajectory"])
             print(f"Run {i}")
-            print(f"Final Energy: {trajectory['final_energy']:.2f}")
-            print(f"Lowest Energy: {trajectory['min_energy']:.2f}")
-            print(f"Move counts: {trajectory['move_counts']}")
-            print(f"Runtime: {trajectory['runtime']:.2f} seconds\n")
-        print(f"Runtime: {(time.time() - total_runtime):.2f} seconds\n")
+            print(f"Final Energy: {result['final_energy']:.2f}")
+            print(f"Lowest Energy: {result['min_energy']:.2f}")
+            print(f"Move counts: {result['move_counts']}")
+            print(f"Runtime: {result['runtime']:.2f} seconds\n")
+        end_time = time.time()
+        plot_contact_graphs(graphs, sequence)
+        print(f"Runtime: {(end_time - total_runtime):.2f} seconds\n")
 
 if __name__ == "__main__":
     main()

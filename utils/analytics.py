@@ -46,7 +46,12 @@ def contact_frequency_matrix(consensus, n_residues):
     return M
 
 # Plot the contact-frequency matrix as a 2D heatmap
-def plot_contact_matrix(matrix):
+def plot_contact_matrix(graphs, sequence):
+    n_residues = len(sequence)
+    # Build consensus contact graph across runs
+    consensus = consensus_contact_graph(graphs)
+    # Convert to matrix representation
+    matrix = contact_frequency_matrix(consensus, n_residues)
     plt.figure(figsize=(7, 6))
     im = plt.imshow(matrix, origin="lower", cmap="viridis")
     plt.colorbar(im, label="Contact frequency")
@@ -56,24 +61,26 @@ def plot_contact_matrix(matrix):
     plt.tight_layout()
     plt.show()
 
-# Calls consensus  plotting functions and returns scores
-def plot_contact_graphs(graphs, sequence):
-    n_residues = len(sequence)
-    # Build consensus contact graph across runs
-    consensus = consensus_contact_graph(graphs)
-    # Convert to matrix representation
-    M = contact_frequency_matrix(consensus, n_residues)
-    plot_contact_matrix(M) # plot the contact map
-
 # Plot total energy over simulation steps
-def plot_energy_vs_steps(trajectory):
-    steps = [step["step"] for step in trajectory]
-    energies = [step["total_energy"] for step in trajectory]
-    plt.figure(figsize=(8, 5))
-    plt.plot(steps, energies, linewidth=2)
+def plot_energy_vs_steps(trajectory=None, trajectories=None):
+    if trajectories is not None:
+        min_len = min(len(traj) for traj in trajectories)
+        steps = np.array([traj[i]["step"] for i in range(min_len) for traj in trajectories[:1]])
+        energies = np.array([[traj[i]["total_energy"] for i in range(min_len)] for traj in trajectories])
+        mean_energy = energies.mean(axis=0)
+        std_energy = energies.std(axis=0)
+        plt.figure(figsize=(8, 5))
+        plt.plot(steps, mean_energy, linewidth=2, label="Mean energy")
+        plt.fill_between(steps, mean_energy - std_energy, mean_energy + std_energy, alpha=0.3, label="±1 std")
+    else:
+        steps = [step["step"] for step in trajectory]
+        energies = [step["total_energy"] for step in trajectory]
+        plt.figure(figsize=(8, 5))
+        plt.plot(steps, energies, linewidth=2)
     plt.xlabel("Step")
     plt.ylabel("Energy")
     plt.title("Metropolis MC Progression")
+    plt.legend()
     plt.grid(True)
     plt.tight_layout()
     plt.show()

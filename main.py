@@ -13,13 +13,13 @@ from folding.relax import relax_chain
 
 from utils.save import save_structure, save_log
 from utils.viewer import plot_3d
-from utils.analytics import plot_energy_vs_steps, plot_contact_graphs, build_contact_graph
+from utils.analytics import plot_energy_vs_steps, plot_contact_matrix, build_contact_graph
 
 structure_dir = "output/structures"
 log_dir = "output/logs"
 data_dir = "data"
 
-def run_simulation(sequence, residue_props, steps, seed, run_id=None, plot=False,):
+def run_simulation(sequence, residue_props, steps, seed, run_id=None, plot=False):
     if run_id is not None:
         random.seed(seed + run_id)
         run_tag = f"run_{run_id}"
@@ -33,20 +33,20 @@ def run_simulation(sequence, residue_props, steps, seed, run_id=None, plot=False
     chain = PeptideChain(residue_props=residue_props, lattice=lattice)
     chain.initialize_linear(sequence)
 
-    energy_model = EnergyModel( alpha=0.2, eps_HH=1.0, eps_HP=0.3, eps_PP=0.1, eps_Q=1.0,)
-    trajectory = relax_chain( chain, lattice, energy_model, n_steps=steps, T_start=2.0, T_end=0.5,)
+    energy_model = EnergyModel( alpha=0.2, eps_HH=1.0, eps_HP=0.3, eps_PP=0.1, eps_Q=1.0)
+    trajectory = relax_chain( chain, lattice, energy_model, n_steps=steps, T_start=2.0, T_end=0.5)
 
-    log_data = {"sequence": sequence, "seed": seed, "trajectory": trajectory, "run_id": run_tag,}
+    log_data = {"sequence": sequence, "seed": seed, "trajectory": trajectory, "run_id": run_tag}
     save_log(log_data, log_dir, prefix=run_tag)
 
     structure = chain.get_structure()
-    csv_filename = save_structure( structure, structure_dir, sequence=sequence, prefix=run_tag,)
+    csv_filename = save_structure( structure, structure_dir, sequence=sequence, prefix=run_tag)
 
     runtime = time.time() - start_time
 
     if plot:
         plot_3d(os.path.join(structure_dir, csv_filename), local_energies=trajectory[-1]["local_energies"],)
-        plot_energy_vs_steps(trajectory)
+        plot_energy_vs_steps(trajectory=trajectory, trajectories=None)
 
     move_types = [step["move_type"] for step in trajectory if "move_type" in step]
     move_counts = Counter(move_types)
@@ -96,13 +96,13 @@ def main():
             residue_props=residue_props, 
             steps=args.steps, 
             seed=args.seed, 
-            plot=True,
+            plot=True
         )
         print(f"Sequence: {sequence}")
         print(f"Length: {len(sequence)}")
         print(f"Final Energy: {result['final_energy']:.2f}")
         print(f"Lowest Energy: {result['min_energy']:.2f}")
-        print(f"Move counts: {result['move_counts']}")
+        print(f"Moves: {result['move_counts']}")
         print(f"Runtime: {result['runtime']:.2f} seconds")
         print(f"Structures saved to {structure_dir}")
         print(f"Logs saved to {log_dir}")
@@ -120,17 +120,18 @@ def main():
                 steps=args.steps,
                 seed=args.seed,
                 run_id=i,
-                plot=False,
+                plot=False
             )
             graphs.append(result["contact_graph"])
             trajectories.append(result["trajectory"])
             print(f"Run {i}")
             print(f"Final Energy: {result['final_energy']:.2f}")
             print(f"Lowest Energy: {result['min_energy']:.2f}")
-            print(f"Move counts: {result['move_counts']}")
+            print(f"Moves: {result['move_counts']}")
             print(f"Runtime: {result['runtime']:.2f} seconds\n")
         end_time = time.time()
-        plot_contact_graphs(graphs, sequence)
+        plot_contact_matrix(graphs, sequence)
+        plot_energy_vs_steps(trajectory=None, trajectories=trajectories)
         print(f"Runtime: {(end_time - total_runtime):.2f} seconds\n")
 
 if __name__ == "__main__":

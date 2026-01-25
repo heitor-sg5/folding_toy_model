@@ -7,6 +7,7 @@ class EnergyModel:
         self.eps_Q = eps_Q # energy for charge-charge interaction
 
     def pair_energy(self, a, b):
+        """Computes the total energy for every pair of residues."""
         e = 0.0
         # Hydrophobic interactions
         if a.hydrophobicity > 0 and b.hydrophobicity > 0:
@@ -26,8 +27,8 @@ class EnergyModel:
                 e += self.eps_Q # penalty, energy increases
         return e
 
-    # Compute energy (= alpha * H * exposed) due to solvent exposure
     def compute_solvent_energy(self, cube, lattice):
+        """Compute energy (= alpha * H * exposed) due to solvent exposure."""
         exposed = 6
         for nbr in lattice.get_neighbours(cube.position):
             if lattice.is_occupied(nbr):
@@ -36,8 +37,8 @@ class EnergyModel:
             return self.alpha * cube.hydrophobicity * exposed
         return 0.0
 
-    # Compute contact energy contribution for a single residue
     def compute_contact_energy(self, cube, chain, lattice, seen_pairs=None):
+        """Compute contact energy contribution for a single residue."""
         energy = 0.0
         if seen_pairs is None:
             seen_pairs = set() # fallback for single-residue call
@@ -55,8 +56,8 @@ class EnergyModel:
             seen_pairs.add(pair)
         return energy
 
-    # Compute local energies for the entire chain
     def compute_local_energies(self, chain):
+        """Compute local energies for the entire chain."""
         local = {c.index: 0.0 for c in chain.residues}
         lattice = chain.lattice
         seen_pairs = set() # shared across all residues

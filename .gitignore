@@ -3,6 +3,3 @@ __pycache__/
 
 venv/
 *.log
-
-output/logs/
-output/structures/

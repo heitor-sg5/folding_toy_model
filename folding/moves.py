@@ -1,16 +1,21 @@
 import random
 
-PIVOT_P = 0.25 # Probability of attempting a pivot move
+PIVOT_P = 0.25  # Probability of attempting a pivot move
 
-# Check if two lattice positions are adjacent
+def set_pivot_probability(p):
+    """Set the global probability of attempting a pivot move."""
+    global PIVOT_P
+    PIVOT_P = float(p)
+
 def are_adjacent(pos1, pos2):
+    """Check if two lattice positions are adjacent."""
     dx = abs(pos1[0] - pos2[0])
     dy = abs(pos1[1] - pos2[1])
     dz = abs(pos1[2] - pos2[2])
     return dx + dy + dz == 1 # only face-adjacent positions
 
-# Get all valid moves for the chain at current conformation
 def get_possible_moves(chain):
+    """Get all valid moves for the chain at current conformation."""
     moves = []
     residues = chain.residues
     lattice = chain.lattice
@@ -71,8 +76,8 @@ def get_possible_moves(chain):
                 })
     return moves
 
-# Apply a move to the chain and update lattice occupancy
 def apply_move(chain, move):
+    """Apply a move to the chain and update lattice occupancy."""
     lattice = chain.lattice
     indices = move["cube_indices"]
 
@@ -85,8 +90,8 @@ def apply_move(chain, move):
         chain.residues[idx].set_position(pos)
         lattice.add_cube(chain.residues[idx])
 
-# Rotate a vector around a given axis (0=x,1=y,2=z)
 def rotate(v, axis):
+    """Rotate a vector around a given axis (0=x,1=y,2=z)."""
     x, y, z = v
     if axis == 0:
         return (x, -z, y)
@@ -95,8 +100,8 @@ def rotate(v, axis):
     else:
         return (-y, x, z)
 
-# Rotate a subchain around pivot_cube
 def rotate_subchain(pivot_cube, subchain, lattice):
+    """Rotate a subchain around pivot_cube."""
     vectors = []
     prev = pivot_cube.position
     # Compute relative vectors from pivot

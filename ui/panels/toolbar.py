@@ -65,7 +65,7 @@ def toolbar(residue_props: Dict):
                 "Polar-polar (εPP)", value=float(params["eps_PP"]), key="eps_PP"
             )
             params["eps_Q"] = st.number_input(
-                "Charge (εQ)", value=float(params["eps_Q"]), key="eps_Q"
+                "Charge-charge (εQQ)", value=float(params["eps_Q"]), key="eps_Q"
             )
             params["pivot_p"] = st.slider(
                 "Pivot move probability",

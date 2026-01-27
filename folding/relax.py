@@ -7,8 +7,8 @@ def relax_chain(chain, lattice, energy_model, n_steps=1000, T_start=2.0, T_end=0
     trajectory = []
 
     for step in range(n_steps):
-        # Linear annealing (decrease temperature from T_start to T_end)
-        temperature = T_start - (T_start - T_end) * (step / n_steps)
+        # Exponential annealing (decrease temperature from T_start to T_end)
+        temperature = T_start * (T_end / T_start) ** (step / (n_steps - 1))
 
         # Generate all valid moves
         moves = get_possible_moves(chain)

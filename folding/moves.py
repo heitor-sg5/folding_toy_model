@@ -79,7 +79,7 @@ def get_possible_moves(chain):
                 })
     
     # Crankshaft moves: rotate two consecutive interior residues
-    if random.random() < PIVOT_P:
+    if random.random() < CRANKSHAFT_P:
         for i in range(1, n - 2):
             new_positions = crankshaft_positions(chain, i, lattice)
             if new_positions:

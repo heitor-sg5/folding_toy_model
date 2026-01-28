@@ -65,7 +65,6 @@ def plot_landscapes(results, smooth_sigma=2):
     fig = make_subplots(
         rows=1, cols=2,
         specs=[[{'type':'surface'}, {'type':'surface'}]],
-        subplot_titles=["Entropy Landscape", "Fold Landscape"]
     )
 
     fig.add_trace(

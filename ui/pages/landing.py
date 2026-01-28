@@ -3,7 +3,6 @@ import streamlit as st
 from core.validation import validate_sequence
 from utils.io import load_residue_props
 
-
 def landing_page():
     """Render landing page with sequence input."""
     residue_props = load_residue_props()
